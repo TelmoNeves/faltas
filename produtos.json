@@ -1,0 +1,26 @@
+{
+  "tabs": [
+    {
+      "nome": "Farmacia",
+      "produtos": [
+        "Leite",
+        "Arroz",
+        "Feijão",
+        "Açúcar",
+        "Café",
+        "Massa",
+        "Farinha"
+      ]
+    },
+
+    {
+      "nome": "Mamepe",
+      "produtos": [
+        "Banana",
+        "Maçã",
+        "Laranja",
+        "Pêra"
+      ]
+    }
+  ]
+}
