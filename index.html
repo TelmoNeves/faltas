@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lista Produtos</title>
+
+<link rel="manifest" href="manifest.json">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body { padding:20px; }
+.produto {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:10px;
+    margin-bottom:8px;
+}
+.qtd {
+    min-width:30px;
+    text-align:center;
+    display:inline-block;
+}
+h5{
+    margin-top:20px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h2>Lista Produtos</h2>
+
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <button id="tabCompras"
+            class="nav-link active"
+            onclick="trocarAba('compras')">
+            Compras
+        </button>
+    </li>
+
+    <li class="nav-item">
+        <button id="tabFaltas"
+            class="nav-link"
+            onclick="trocarAba('faltas')">
+            Faltas
+        </button>
+    </li>
+</ul>
+
+<div id="lista"></div>
+
+<div class="mt-4 d-flex gap-2">
+    <button class="btn btn-success"
+        onclick="exportar()">
+        Exportar
+    </button>
+
+    <button class="btn btn-warning"
+        onclick="zerar()">
+        Zerar lista
+    </button>
+</div>
+
+</div>
+
+<script>
+
+let abaAtual="compras";
+
+let dados=JSON.parse(
+localStorage.getItem("dados")
+)||{
+
+produtos:[
+
+{categoria:"Mercearia",nome:"Leite"},
+{categoria:"Mercearia",nome:"Arroz"},
+{categoria:"Mercearia",nome:"Feijão"},
+
+{categoria:"Higiene",nome:"Shampoo 500ml"},
+{categoria:"Higiene",nome:"Pasta dentes"},
+
+{categoria:"Limpeza",nome:"Detergente"},
+{categoria:"Limpeza",nome:"Lixívia"},
+
+{categoria:"Jardim",nome:"Fertilizante"}
+
+],
+
+compras:{},
+faltas:{}
+
+};
+
+function guardar(){
+
+localStorage.setItem(
+"dados",
+JSON.stringify(dados)
+);
+
+renderizar();
+
+}
+
+function trocarAba(nome){
+
+abaAtual=nome;
+
+document
+.getElementById("tabCompras")
+.classList.toggle(
+"active",
+nome==="compras"
+);
+
+document
+.getElementById("tabFaltas")
+.classList.toggle(
+"active",
+nome==="faltas"
+);
+
+renderizar();
+
+}
+
+function alterar(nome,valor){
+
+let atual=
+dados[abaAtual][nome]||0;
+
+dados[abaAtual][nome]=
+Math.max(
+0,
+atual+valor
+);
+
+guardar();
+
+}
+
+function renderizar(){
+
+let html="";
+
+const categorias=[
+...new Set(
+dados.produtos.map(
+p=>p.categoria
+)
+)
+];
+
+categorias.forEach(cat=>{
+
+html+=`
+<h5>${cat}</h5>
+`;
+
+dados.produtos
+.filter(
+p=>p.categoria===cat
+)
+.forEach(prod=>{
+
+let qtd=
+dados[abaAtual]
+[prod.nome]||0;
+
+html+=`
+
+<div class="produto">
+
+<div>
+${prod.nome}
+</div>
+
+<div>
+
+<button
+class="btn btn-secondary btn-sm"
+onclick="alterar(
+'${prod.nome}',
+-1
+)">
+-
+</button>
+
+<span class="qtd">
+${qtd}
+</span>
+
+<button
+class="btn btn-primary btn-sm"
+onclick="alterar(
+'${prod.nome}',
+1
+)">
++
+</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+});
+
+document
+.getElementById(
+"lista"
+)
+.innerHTML=html;
+
+}
+
+function exportar(){
+
+let texto=
+Object.entries(
+dados[abaAtual]
+)
+.filter(
+([nome,qtd])=>
+qtd>0
+)
+.map(
+([nome,qtd])=>
+`${qtd} x ${nome}`
+)
+.join("\n");
+
+if(!texto){
+
+alert(
+"Lista vazia"
+);
+
+return;
+
+}
+
+navigator
+.clipboard
+.writeText(
+texto
+);
+
+if(
+navigator.share
+){
+
+navigator.share({
+text:texto
+});
+
+}else{
+
+alert(
+texto
+);
+
+}
+
+}
+
+function zerar(){
+
+dados[abaAtual]={};
+
+guardar();
+
+}
+
+if(
+"serviceWorker"
+in navigator
+){
+
+navigator
+.serviceWorker
+.register(
+"service-worker.js"
+);
+
+}
+
+renderizar();
+
+</script>
+
+</body>
+</html>
