@@ -176,26 +176,56 @@ Fechar
 
 let dados=
 JSON.parse(
-localStorage.getItem(
-"dados"
-)
-)||{
+localStorage.getItem("dados")
+);
 
-tabAtual:"Mercearia",
+async function carregarInicial(){
 
-tabs:{
+if(dados){
 
-Mercearia:{
-
-Leite:0,
-Arroz:0,
-Feijão:0
+render();
+return;
 
 }
 
-}
+let resposta=
+await fetch(
+"produtos.json"
+);
+
+let json=
+await resposta.json();
+
+dados={
+
+tabAtual:
+json.tabs[0]?.nome || "",
+
+tabs:{}
 
 };
+
+json.tabs.forEach(tab=>{
+
+dados.tabs[
+tab.nome
+]={};
+
+tab.produtos.forEach(prod=>{
+
+dados.tabs[
+tab.nome
+][prod]=0;
+
+});
+
+});
+
+guardar();
+
+}
+
+carregarInicial();
 
 let textoExportacao="";
 
