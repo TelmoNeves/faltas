@@ -119,6 +119,14 @@ Exportar
 </button>
 
 <button
+class="btn btn-info"
+onclick="exportarJSON()">
+
+Exportar JSON
+
+</button>
+  
+<button
 class="btn btn-warning"
 onclick="zerar()">
 
@@ -549,6 +557,74 @@ textoExportacao
 });
 
 }
+
+}
+
+  function exportarJSON(){
+
+let estrutura={
+
+tabs:[]
+
+};
+
+Object.entries(
+dados.tabs
+)
+
+.forEach(
+
+([nomeAba,produtos])=>{
+
+estrutura.tabs.push({
+
+nome:nomeAba,
+
+produtos:Object.keys(
+produtos
+)
+
+});
+
+}
+
+);
+
+let json=
+JSON.stringify(
+estrutura,
+null,
+2
+);
+
+let blob=
+new Blob(
+[json],
+{
+type:"application/json"
+}
+);
+
+let url=
+URL.createObjectURL(
+blob
+);
+
+let a=
+document.createElement(
+"a"
+);
+
+a.href=url;
+
+a.download=
+"produtos.json";
+
+a.click();
+
+URL.revokeObjectURL(
+url
+);
 
 }
 
