@@ -3,208 +3,326 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Lista Produtos</title>
 
 <link rel="manifest" href="manifest.json">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+rel="stylesheet">
 
 <style>
-body { padding:20px; }
-.produto {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    border:1px solid #ddd;
-    border-radius:10px;
-    padding:10px;
-    margin-bottom:8px;
+
+body{
+padding:20px;
 }
-.qtd {
-    min-width:30px;
-    text-align:center;
-    display:inline-block;
+
+.produto{
+display:flex;
+justify-content:space-between;
+align-items:center;
+border:1px solid #ddd;
+border-radius:10px;
+padding:10px;
+margin-bottom:8px;
 }
-h5{
-    margin-top:20px;
+
+.qtd{
+display:inline-block;
+min-width:30px;
+text-align:center;
 }
+
+.tab-scroll{
+overflow-x:auto;
+white-space:nowrap;
+}
+
+.modal-bg{
+
+position:fixed;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.5);
+
+display:none;
+
+align-items:center;
+justify-content:center;
+
+padding:20px;
+
+}
+
+.modal-box{
+
+background:white;
+padding:20px;
+border-radius:12px;
+width:100%;
+max-width:500px;
+
+}
+
+pre{
+white-space:pre-wrap;
+}
+
 </style>
 
 </head>
+
 <body>
 
 <div class="container">
 
 <h2>Lista Produtos</h2>
 
-<ul class="nav nav-tabs mb-3">
-    <li class="nav-item">
-        <button id="tabCompras"
-            class="nav-link active"
-            onclick="trocarAba('compras')">
-            Farmácia
-        </button>
-    </li>
+<div
+id="tabs"
+class="tab-scroll mb-3">
+</div>
 
-    <li class="nav-item">
-        <button id="tabFaltas"
-            class="nav-link"
-            onclick="trocarAba('faltas')">
-            Mamepe
-        </button>
-    </li>
-</ul>
+<div class="mb-3">
+
+<button
+class="btn btn-primary btn-sm"
+onclick="novaTab()">
+
++ Nova Aba
+
+</button>
+
+<button
+class="btn btn-secondary btn-sm"
+onclick="novoProduto()">
+
++ Produto
+
+</button>
+
+</div>
 
 <div id="lista"></div>
 
-<div class="mt-4 d-flex gap-2">
-    <button class="btn btn-success"
-        onclick="exportar()">
-        Exportar
-    </button>
+<div class="mt-3">
 
-    <button class="btn btn-warning"
-        onclick="zerar()">
-        Zerar lista
-    </button>
+<button
+class="btn btn-success"
+onclick="mostrarExportacao()">
+
+Exportar
+
+</button>
+
+<button
+class="btn btn-warning"
+onclick="zerar()">
+
+Zerar
+
+</button>
+
+</div>
+
+</div>
+
+<div
+class="modal-bg"
+id="modal">
+
+<div class="modal-box">
+
+<h5>Pré-visualização</h5>
+
+<pre id="preview"></pre>
+
+<div class="mt-3">
+
+<button
+class="btn btn-primary"
+onclick="copiar()">
+
+Copiar
+
+</button>
+
+<button
+class="btn btn-success"
+onclick="partilhar()">
+
+Partilhar
+
+</button>
+
+<button
+class="btn btn-secondary"
+onclick="fecharModal()">
+
+Fechar
+
+</button>
+
+</div>
+
 </div>
 
 </div>
 
 <script>
 
-let abaAtual="compras";
-
-let dados=JSON.parse(
-localStorage.getItem("dados")
+let dados=
+JSON.parse(
+localStorage.getItem(
+"dados"
+)
 )||{
 
-produtos:[
+tabAtual:"Mercearia",
 
-{categoria:"Mercearia",nome:"Leite"},
-{categoria:"Mercearia",nome:"Arroz"},
-{categoria:"Mercearia",nome:"Feijão"},
+tabs:{
 
-{categoria:"Higiene",nome:"Shampoo 500ml"},
-{categoria:"Higiene",nome:"Pasta dentes"},
+Mercearia:{
 
-{categoria:"Limpeza",nome:"Detergente"},
-{categoria:"Limpeza",nome:"Lixívia"},
+Leite:0,
+Arroz:0,
+Feijão:0
 
-{categoria:"Jardim",nome:"Fertilizante"}
+}
 
-],
-
-compras:{},
-faltas:{}
+}
 
 };
+
+let textoExportacao="";
 
 function guardar(){
 
 localStorage.setItem(
 "dados",
-JSON.stringify(dados)
+JSON.stringify(
+dados
+)
 );
 
-renderizar();
+render();
 
 }
 
-function trocarAba(nome){
+function renderTabs(){
 
-abaAtual=nome;
+let html="";
+
+Object.keys(
+dados.tabs
+)
+
+.forEach(nome=>{
+
+html+=`
+
+<button
+class="btn ${
+nome===dados.tabAtual
+?
+'btn-primary'
+:
+'btn-outline-primary'
+}
+me-2 mb-2"
+
+onclick="
+trocarTab(
+'${nome}'
+)
+">
+
+${nome}
+
+</button>
+
+`;
+
+});
 
 document
-.getElementById("tabCompras")
-.classList.toggle(
-"active",
-nome==="compras"
-);
-
-document
-.getElementById("tabFaltas")
-.classList.toggle(
-"active",
-nome==="faltas"
-);
-
-renderizar();
+.getElementById(
+"tabs"
+)
+.innerHTML=html;
 
 }
 
-function alterar(nome,valor){
+function trocarTab(nome){
 
-let atual=
-dados[abaAtual][nome]||0;
-
-dados[abaAtual][nome]=
-Math.max(
-0,
-atual+valor
-);
+dados.tabAtual=
+nome;
 
 guardar();
 
 }
 
-function renderizar(){
+function render(){
+
+renderTabs();
+
+let produtos=
+dados.tabs[
+dados.tabAtual
+];
 
 let html="";
 
-const categorias=[
-...new Set(
-dados.produtos.map(
-p=>p.categoria
-)
-)
-];
+Object
+.entries(produtos)
 
-categorias.forEach(cat=>{
+.forEach(
 
-html+=`
-<h5>${cat}</h5>
-`;
-
-dados.produtos
-.filter(
-p=>p.categoria===cat
-)
-.forEach(prod=>{
-
-let qtd=
-dados[abaAtual]
-[prod.nome]||0;
+([nome,qtd])=>{
 
 html+=`
 
 <div class="produto">
 
 <div>
-${prod.nome}
+${nome}
 </div>
 
 <div>
 
 <button
 class="btn btn-secondary btn-sm"
-onclick="alterar(
-'${prod.nome}',
+onclick="
+alterar(
+'${nome}',
 -1
-)">
+)
+">
+
 -
+
 </button>
 
 <span class="qtd">
+
 ${qtd}
+
 </span>
 
 <button
 class="btn btn-primary btn-sm"
-onclick="alterar(
-'${prod.nome}',
+onclick="
+alterar(
+'${nome}',
 1
-)">
+)
+">
+
 +
+
 </button>
 
 </div>
@@ -213,9 +331,9 @@ onclick="alterar(
 
 `;
 
-});
+}
 
-});
+);
 
 document
 .getElementById(
@@ -225,78 +343,186 @@ document
 
 }
 
-function exportar(){
+function alterar(
+nome,
+valor
+){
 
-let texto=
-Object.entries(
-dados[abaAtual]
-)
-.filter(
-([nome,qtd])=>
-qtd>0
-)
-.map(
-([nome,qtd])=>
-`${qtd} x ${nome}`
-)
-.join("\n");
+let atual=
+dados.tabs[
+dados.tabAtual
+][nome];
 
-if(!texto){
-
-alert(
-"Lista vazia"
+dados.tabs[
+dados.tabAtual
+][nome]=
+Math.max(
+0,
+atual+valor
 );
 
-return;
+guardar();
 
 }
+
+function novaTab(){
+
+let nome=
+prompt(
+"Nome da aba:"
+);
+
+if(
+!nome
+)
+return;
+
+dados.tabs[
+nome
+]={};
+
+dados.tabAtual=
+nome;
+
+guardar();
+
+}
+
+function novoProduto(){
+
+let nome=
+prompt(
+"Nome do produto:"
+);
+
+if(
+!nome
+)
+return;
+
+dados.tabs[
+dados.tabAtual
+][nome]=0;
+
+guardar();
+
+}
+
+function zerar(){
+
+Object
+.keys(
+dados.tabs[
+dados.tabAtual
+]
+)
+
+.forEach(
+
+p=>{
+
+dados.tabs[
+dados.tabAtual
+][p]=0;
+
+}
+
+);
+
+guardar();
+
+}
+
+function mostrarExportacao(){
+
+let txt=
+dados.tabAtual+
+"\n\n";
+
+Object
+.entries(
+dados.tabs[
+dados.tabAtual
+]
+)
+
+.filter(
+([n,q])=>
+q>0
+)
+
+.forEach(
+
+([n,q])=>{
+
+txt+=
+q+
+" x "+
+n+
+"\n";
+
+}
+
+);
+
+textoExportacao=
+txt;
+
+document
+.getElementById(
+"preview"
+)
+.innerText=
+txt;
+
+document
+.getElementById(
+"modal"
+)
+.style.display=
+"flex";
+
+}
+
+function fecharModal(){
+
+document
+.getElementById(
+"modal"
+)
+.style.display=
+"none";
+
+}
+
+function copiar(){
 
 navigator
 .clipboard
 .writeText(
-texto
+textoExportacao
 );
+
+}
+
+function partilhar(){
 
 if(
 navigator.share
 ){
 
 navigator.share({
-text:texto
+
+text:
+textoExportacao
+
 });
 
-}else{
-
-alert(
-texto
-);
-
 }
 
 }
 
-function zerar(){
-
-dados[abaAtual]={};
-
-guardar();
-
-}
-
-if(
-"serviceWorker"
-in navigator
-){
-
-navigator
-.serviceWorker
-.register(
-"service-worker.js"
-);
-
-}
-
-renderizar();
+render();
 
 </script>
 
