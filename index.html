@@ -4,13 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Faltas 1.0</title>
+<title>Lista Produtos</title>
 
 <link rel="manifest" href="manifest.json">
 
-<link
-href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
 
@@ -19,56 +17,42 @@ padding:20px;
 }
 
 .produto{
+
 display:flex;
 justify-content:space-between;
 align-items:center;
+
+padding:10px;
+
 border:1px solid #ddd;
 border-radius:10px;
-padding:10px;
 margin-bottom:8px;
+
 }
 
 .qtd{
+
 display:inline-block;
-min-width:30px;
+width:30px;
 text-align:center;
+
 }
 
-.tab-scroll{
+.tabArea{
+
 overflow-x:auto;
 white-space:nowrap;
-}
-
-.modal-bg{
-
-position:fixed;
-left:0;
-top:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.5);
-
-display:none;
-
-align-items:center;
-justify-content:center;
-
-padding:20px;
+margin-bottom:20px;
 
 }
 
-.modal-box{
+.categoria{
 
-background:white;
-padding:20px;
-border-radius:12px;
-width:100%;
-max-width:500px;
+border:1px solid #ddd;
+padding:15px;
+border-radius:10px;
+margin-bottom:20px;
 
-}
-
-pre{
-white-space:pre-wrap;
 }
 
 </style>
@@ -83,7 +67,7 @@ white-space:pre-wrap;
 
 <div
 id="tabs"
-class="tab-scroll mb-3">
+class="tabArea">
 </div>
 
 <div class="mb-3">
@@ -98,20 +82,14 @@ onclick="novaTab()">
 
 <button
 class="btn btn-secondary btn-sm"
-onclick="novoProduto()">
+onclick="novaCategoria()">
 
-+ Produto
++ Categoria
 
 </button>
 
-</div>
-
-<div id="lista"></div>
-
-<div class="mt-3">
-
 <button
-class="btn btn-success"
+class="btn btn-success btn-sm"
 onclick="mostrarExportacao()">
 
 Exportar
@@ -119,64 +97,16 @@ Exportar
 </button>
 
 <button
-class="btn btn-info"
+class="btn btn-info btn-sm"
 onclick="exportarJSON()">
 
 Exportar JSON
 
 </button>
-  
-<button
-class="btn btn-warning"
-onclick="zerar()">
-
-Zerar
-
-</button>
 
 </div>
 
-</div>
-
-<div
-class="modal-bg"
-id="modal">
-
-<div class="modal-box">
-
-<h5>Pré-visualização</h5>
-
-<pre id="preview"></pre>
-
-<div class="mt-3">
-
-<button
-class="btn btn-primary"
-onclick="copiar()">
-
-Copiar
-
-</button>
-
-<button
-class="btn btn-success"
-onclick="partilhar()">
-
-Partilhar
-
-</button>
-
-<button
-class="btn btn-secondary"
-onclick="fecharModal()">
-
-Fechar
-
-</button>
-
-</div>
-
-</div>
+<div id="conteudo"></div>
 
 </div>
 
@@ -184,58 +114,16 @@ Fechar
 
 let dados=
 JSON.parse(
-localStorage.getItem("dados")
-);
+localStorage.getItem(
+"dados"
+)
+)||{
 
-async function carregarInicial(){
-
-if(dados){
-
-render();
-return;
-
-}
-
-let resposta=
-await fetch(
-"produtos.json"
-);
-
-let json=
-await resposta.json();
-
-dados={
-
-tabAtual:
-json.tabs[0]?.nome || "",
+tabAtual:"",
 
 tabs:{}
 
 };
-
-json.tabs.forEach(tab=>{
-
-dados.tabs[
-tab.nome
-]={};
-
-tab.produtos.forEach(prod=>{
-
-dados.tabs[
-tab.nome
-][prod]=0;
-
-});
-
-});
-
-guardar();
-
-}
-
-carregarInicial();
-
-let textoExportacao="";
 
 function guardar(){
 
@@ -258,39 +146,45 @@ Object.keys(
 dados.tabs
 )
 
-.forEach(nome=>{
+.forEach(
+
+tab=>{
 
 html+=`
 
 <button
 class="btn ${
-nome===dados.tabAtual
+tab===dados.tabAtual
 ?
 'btn-primary'
 :
 'btn-outline-primary'
 }
-me-2 mb-2"
+
+me-2"
 
 onclick="
 trocarTab(
-'${nome}'
+'${tab}'
 )
 ">
 
-${nome}
+${tab}
 
 </button>
 
 `;
 
-});
+}
+
+);
 
 document
 .getElementById(
 "tabs"
 )
-.innerHTML=html;
+.innerHTML=
+html;
 
 }
 
@@ -303,39 +197,263 @@ guardar();
 
 }
 
+function novaTab(){
+
+let nome=
+prompt(
+"Nome da aba:"
+);
+
+if(
+!nome
+)return;
+
+dados.tabs[
+nome
+]={};
+
+dados.tabAtual=
+nome;
+
+guardar();
+
+}
+
+function removerCategoria(nome){
+
+if(
+!confirm(
+"Remover categoria?"
+)
+)return;
+
+delete dados
+.tabs[
+dados.tabAtual
+][nome];
+
+guardar();
+
+}
+
+function novaCategoria(){
+
+if(
+!dados.tabAtual
+){
+
+alert(
+"Crie uma aba primeiro"
+);
+
+return;
+
+}
+
+let nome=
+prompt(
+"Nome categoria:"
+);
+
+if(
+!nome
+)return;
+
+dados.tabs[
+dados.tabAtual
+][nome]={};
+
+guardar();
+
+}
+
+function novoProduto(
+categoria
+){
+
+let nome=
+prompt(
+"Nome produto:"
+);
+
+if(
+!nome
+)return;
+
+dados
+.tabs[
+dados.tabAtual
+]
+[categoria]
+[nome]=0;
+
+guardar();
+
+}
+
+function removerProduto(
+categoria,
+produto
+){
+
+delete dados
+.tabs[
+dados.tabAtual
+]
+[categoria]
+[produto];
+
+guardar();
+
+}
+
+function alterar(
+categoria,
+produto,
+valor
+){
+
+let atual=
+
+dados
+.tabs[
+dados.tabAtual
+]
+[categoria]
+[produto];
+
+dados
+.tabs[
+dados.tabAtual
+]
+[categoria]
+[produto]=
+
+Math.max(
+0,
+atual+valor
+);
+
+guardar();
+
+}
+
 function render(){
 
 renderTabs();
 
-let produtos=
-dados.tabs[
-dados.tabAtual
-];
+if(
+!dados.tabAtual
+){
+
+document
+.getElementById(
+"conteudo"
+)
+
+.innerHTML=
+
+"Crie uma aba";
+
+return;
+
+}
 
 let html="";
 
-Object
-.entries(produtos)
+Object.entries(
+
+dados.tabs[
+dados.tabAtual
+]
+
+)
 
 .forEach(
 
-([nome,qtd])=>{
+([categoria,
+produtos])=>{
+
+html+=`
+
+<div class="categoria">
+
+<h5>
+
+${categoria}
+
+<button
+class="btn btn-danger btn-sm ms-2"
+
+onclick="
+removerCategoria(
+'${categoria}'
+)
+">
+
+X
+
+</button>
+
+</h5>
+
+<button
+class="btn btn-secondary btn-sm mb-3"
+
+onclick="
+novoProduto(
+'${categoria}'
+)
+">
+
++ Produto
+
+</button>
+
+`;
+
+Object.entries(
+produtos
+)
+
+.forEach(
+
+([produto,
+qtd])=>{
 
 html+=`
 
 <div class="produto">
 
 <div>
-${nome}
+
+${produto}
+
+<button
+class="btn btn-danger btn-sm ms-2"
+
+onclick="
+removerProduto(
+'${categoria}',
+'${produto}'
+)
+">
+
+X
+
+</button>
+
 </div>
 
 <div>
 
 <button
 class="btn btn-secondary btn-sm"
+
 onclick="
 alterar(
-'${nome}',
+'${categoria}',
+'${produto}',
 -1
 )
 ">
@@ -352,9 +470,11 @@ ${qtd}
 
 <button
 class="btn btn-primary btn-sm"
+
 onclick="
 alterar(
-'${nome}',
+'${categoria}',
+'${produto}',
 1
 )
 ">
@@ -373,199 +493,84 @@ alterar(
 
 );
 
+html+=`</div>`;
+
+}
+
+);
+
 document
 .getElementById(
-"lista"
+"conteudo"
 )
-.innerHTML=html;
-
-}
-
-function alterar(
-nome,
-valor
-){
-
-let atual=
-dados.tabs[
-dados.tabAtual
-][nome];
-
-dados.tabs[
-dados.tabAtual
-][nome]=
-Math.max(
-0,
-atual+valor
-);
-
-guardar();
-
-}
-
-function novaTab(){
-
-let nome=
-prompt(
-"Nome da aba:"
-);
-
-if(
-!nome
-)
-return;
-
-dados.tabs[
-nome
-]={};
-
-dados.tabAtual=
-nome;
-
-guardar();
-
-}
-
-function novoProduto(){
-
-let nome=
-prompt(
-"Nome do produto:"
-);
-
-if(
-!nome
-)
-return;
-
-dados.tabs[
-dados.tabAtual
-][nome]=0;
-
-guardar();
-
-}
-
-function zerar(){
-
-Object
-.keys(
-dados.tabs[
-dados.tabAtual
-]
-)
-
-.forEach(
-
-p=>{
-
-dados.tabs[
-dados.tabAtual
-][p]=0;
-
-}
-
-);
-
-guardar();
+.innerHTML=
+html;
 
 }
 
 function mostrarExportacao(){
 
 let txt=
+
 dados.tabAtual+
+
 "\n\n";
 
-Object
-.entries(
+Object.values(
+
 dados.tabs[
 dados.tabAtual
 ]
+
+)
+
+.forEach(
+
+produtos=>{
+
+Object.entries(
+produtos
 )
 
 .filter(
-([n,q])=>
+([p,q])=>
 q>0
 )
 
 .forEach(
 
-([n,q])=>{
+([p,q])=>{
 
 txt+=
 q+
 " x "+
-n+
+p+
 "\n";
 
 }
 
 );
 
-textoExportacao=
-txt;
-
-document
-.getElementById(
-"preview"
-)
-.innerText=
-txt;
-
-document
-.getElementById(
-"modal"
-)
-.style.display=
-"flex";
-
 }
 
-function fecharModal(){
+);
 
-document
-.getElementById(
-"modal"
-)
-.style.display=
-"none";
-
-}
-
-function copiar(){
+alert(
+txt
+);
 
 navigator
 .clipboard
 .writeText(
-textoExportacao
+txt
 );
 
 }
 
-function partilhar(){
-
-if(
-navigator.share
-){
-
-navigator.share({
-
-text:
-textoExportacao
-
-});
-
-}
-
-}
-
-  function exportarJSON(){
+function exportarJSON(){
 
 let estrutura={
-
 tabs:[]
-
 };
 
 Object.entries(
@@ -574,13 +579,32 @@ dados.tabs
 
 .forEach(
 
-([nomeAba,produtos])=>{
+([tab,
+categorias])=>{
 
-estrutura.tabs.push({
+let t={
 
-nome:nomeAba,
+nome:tab,
+categorias:[]
 
-produtos:Object.keys(
+};
+
+Object.entries(
+categorias
+)
+
+.forEach(
+
+([cat,
+produtos])=>{
+
+t.categorias
+.push({
+
+nome:cat,
+
+produtos:
+Object.keys(
 produtos
 )
 
@@ -590,7 +614,16 @@ produtos
 
 );
 
-let json=
+estrutura.tabs.push(
+t
+);
+
+}
+
+);
+
+let texto=
+
 JSON.stringify(
 estrutura,
 null,
@@ -599,15 +632,10 @@ null,
 
 let blob=
 new Blob(
-[json],
+[texto],
 {
 type:"application/json"
 }
-);
-
-let url=
-URL.createObjectURL(
-blob
 );
 
 let a=
@@ -615,16 +643,15 @@ document.createElement(
 "a"
 );
 
-a.href=url;
+a.href=
+URL.createObjectURL(
+blob
+);
 
 a.download=
 "produtos.json";
 
 a.click();
-
-URL.revokeObjectURL(
-url
-);
 
 }
 
