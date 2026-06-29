@@ -1,25 +1,21 @@
 {
-  "tabs": [
+  "tabs":[
     {
-      "nome": "Farmacia",
-      "produtos": [
-        "Leite",
-        "Arroz",
-        "Feijão",
-        "Açúcar",
-        "Café",
-        "Massa",
-        "Farinha"
-      ]
-    },
-
-    {
-      "nome": "Mamepe",
-      "produtos": [
-        "Banana",
-        "Maçã",
-        "Laranja",
-        "Pêra"
+      "nome":"Mercearia",
+      "categorias":[
+        {
+          "nome":"Bebidas",
+          "produtos":[
+            "Leite",
+            "Café"
+          ]
+        },
+        {
+          "nome":"Massas",
+          "produtos":[
+            "Esparguete"
+          ]
+        }
       ]
     }
   ]
