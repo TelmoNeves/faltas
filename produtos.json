@@ -1,19 +1,59 @@
 {
-  "tabs":[
+  "tabs": [
     {
-      "nome":"Mercearia",
-      "categorias":[
+      "nome": "Farmácia",
+      "categorias": [
         {
-          "nome":"Bebidas",
-          "produtos":[
-            "Leite",
-            "Café"
+          "nome": "Sem categoria",
+          "produtos": [
+            "Amoxicilina 500/125mg",
+            "Gabapentina 100mg",
+            "Gabapentina 300mg",
+            "Lepicortinolo 5mg, 60 comp",
+            "Lepicortinolo 20mg, 60 comp",
+            "Clorocil",
+            "Terricil",
+            "UL250 saquetas",
+            "Flagyl 250mg",
+            "Leflunomida medac 15mg",
+            "Bialminal 100mg",
+            "Luminaletas 15mg",
+            "Soro fisiológico 1L",
+            "Actidox 100mg",
+            "Tedol líquido",
+            "Tedol creme",
+            "Enalapril 5mg",
+            "Enalapril 20mg",
+            "Furosemida 40mg",
+            "bepanthene plus 100g",
+            "Stesolid 10mg/2.5ml (5 bisnagas)"
+          ]
+        }
+      ]
+    },
+    {
+      "nome": "Mamepe",
+      "categorias": [
+        {
+          "nome": "Sem categoria",
+          "produtos": [
+            "Galliprant 60mg"
           ]
         },
         {
-          "nome":"Massas",
-          "produtos":[
-            "Esparguete"
+          "nome": "Antibiótico",
+          "produtos": [
+            "Cladaxxa 40/10mg",
+            "Enrocill 15mg"
+          ]
+        },
+        {
+          "nome": "Cardíacos",
+          "produtos": [
+            "Fortekor 2.5mg",
+            "Fortekor 20mg",
+            "Cardalis 5mg",
+            "Cardalis 10mg"
           ]
         }
       ]
