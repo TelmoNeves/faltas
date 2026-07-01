@@ -73,20 +73,15 @@ class="tabArea">
 <div class="mb-3">
 
 <button
-class="btn btn-primary btn-sm"
-onclick="novaTab()">
+class="btn btn-dark btn-sm"
+onclick="alternarEdicao()"
+id="botaoEditar">
 
-+ Nova Aba
-
-</button>
-
-<button
-class="btn btn-secondary btn-sm"
-onclick="novaCategoria()">
-
-+ Categoria
+Editar
 
 </button>
+
+<span id="areaEdicao"></span>
 
 <button
 class="btn btn-success btn-sm"
@@ -120,6 +115,7 @@ Reset
 
 <script>
 
+let modoEdicao=false;
 let dados=
 JSON.parse(
 localStorage.getItem(
@@ -348,6 +344,8 @@ guardar();
 
 function render(){
 
+renderBotoesEdicao();
+  
 renderTabs();
 
 if(
@@ -390,9 +388,12 @@ html+=`
 
 ${categoria}
 
+${
+modoEdicao
+?
+`
 <button
 class="btn btn-danger btn-sm ms-2"
-
 onclick="
 removerCategoria(
 '${categoria}'
@@ -402,12 +403,19 @@ removerCategoria(
 X
 
 </button>
+`
+:
+""
+}
 
 </h5>
 
+${
+modoEdicao
+?
+`
 <button
 class="btn btn-secondary btn-sm mb-3"
-
 onclick="
 novoProduto(
 '${categoria}'
@@ -417,6 +425,10 @@ novoProduto(
 + Produto
 
 </button>
+`
+:
+""
+}
 
 `;
 
@@ -437,9 +449,12 @@ html+=`
 
 ${produto}
 
+${
+modoEdicao
+?
+`
 <button
 class="btn btn-danger btn-sm ms-2"
-
 onclick="
 removerProduto(
 '${categoria}',
@@ -450,6 +465,10 @@ removerProduto(
 X
 
 </button>
+`
+:
+""
+}
 
 </div>
 
@@ -709,6 +728,68 @@ dados.tabAtual
 );
 
 guardar();
+
+}
+
+  function alternarEdicao(){
+
+modoEdicao=!modoEdicao;
+
+document
+.getElementById(
+"botaoEditar"
+)
+.innerText=
+
+modoEdicao
+?
+"Fechar edição"
+:
+"Editar";
+
+render();
+
+}
+
+function renderBotoesEdicao(){
+
+if(
+!modoEdicao
+){
+
+document
+.getElementById(
+"areaEdicao"
+)
+.innerHTML="";
+
+return;
+
+}
+
+document
+.getElementById(
+"areaEdicao"
+)
+.innerHTML=`
+
+<button
+class="btn btn-primary btn-sm ms-2"
+onclick="novaTab()">
+
++ Nova Aba
+
+</button>
+
+<button
+class="btn btn-secondary btn-sm ms-2"
+onclick="novaCategoria()">
+
++ Categoria
+
+</button>
+
+`;
 
 }
 
