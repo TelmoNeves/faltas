@@ -37,7 +37,12 @@
         {
           "nome": "Sem categoria",
           "produtos": [
-            "Galliprant 60mg"
+            "Galliprant 60mg",
+            "Leukoplast universal tape 10cm x 9.2m",
+            "Omniflora saquetas",
+            "Itrafungol",
+            "Omnimatrix 60g OU 250ml ??????",
+            "Engemicina"
           ]
         },
         {
@@ -53,7 +58,70 @@
             "Fortekor 2.5mg",
             "Fortekor 20mg",
             "Cardalis 5mg",
-            "Cardalis 10mg"
+            "Cardalis 10mg",
+            "Cardisure/Zelys 10mg",
+            "Cardisure/Zelys 5mg"
+          ]
+        },
+        {
+          "nome": "Ouvidos",
+          "produtos": [
+            "Marbogen complex",
+            "Neptra",
+            "Oridermyl",
+            "Omniotic 120ml"
+          ]
+        },
+        {
+          "nome": "Suplementos/Vitaminas",
+          "produtos": [
+            "Wevit 100g",
+            "Wehemo",
+            "Karsivan 50mg",
+            "Weconfort suspensão oral 30ml",
+            "Virbac nutri-plus gel 120g"
+          ]
+        },
+        {
+          "nome": "Desparasitantes",
+          "produtos": [
+            "Zikyall (cães pequenos/médios)",
+            "Zikyall (cães grandes)",
+            "Telmin",
+            "Bravecto 2-8kg",
+            "Frontline spray 250ml",
+            "Nextguard combo gatos 2.5 a 7.5kg",
+            "Simparica 10-20kg",
+            "Milbeguard duo 40mg/10mg",
+            "Sorofen duo",
+            "Heartguard 12-22kg"
+          ]
+        },
+        {
+          "nome": "Aladino",
+          "produtos": [
+            "Pexion 400mg",
+            "Pexion 100mg"
+          ]
+        },
+        {
+          "nome": "Testes",
+          "produtos": [
+            "Uranotest fiv/felv (10 testes)"
+          ]
+        },
+        {
+          "nome": "Anti-inflamatório",
+          "produtos": [
+            "Meloxidyl 0.5mg/ml, 15ml",
+            "Onsior 40mg"
+          ]
+        },
+        {
+          "nome": "Seringas",
+          "produtos": [
+            "Seringas krusse 1ml",
+            "Seringas krusse 3ml??????"
           ]
         }
       ]
